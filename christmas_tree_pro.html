@@ -279,32 +279,32 @@
         }
 
         // --- 增强版图片加载系统 ---
+        // --- SỬA ĐỔI: Tự động lấy ảnh 1.jpg, 2.jpg... trong thư mục images ---
         function loadPredefinedImages() {
             const loader = new THREE.TextureLoader();
-            CONFIG.preload.images.forEach(url => {
-                loader.load(url, 
-                    (t) => { t.colorSpace = THREE.SRGBColorSpace; addPhotoToScene(t); },
-                    undefined,
-                    (e) => { console.log(`Skipped: ${url}`); }
-                );
-            });
+            
+            // 1. CÀI ĐẶT SỐ LƯỢNG ẢNH CỦA BẠN Ở ĐÂY
+            // Ví dụ bạn có 40 ảnh thì sửa số 30 thành 40
+            const totalImages = 30; 
 
-            if (CONFIG.preload.autoScanLocal) {
-                for (let i = 1; i <= CONFIG.preload.scanCount; i++) {
-                    const pathJpg = `./images/(${i}).jpg`;
-                    const pathPng = `./images/(${i}).png`;
-                    loader.load(pathJpg, 
-                        (t) => { t.colorSpace = THREE.SRGBColorSpace; addPhotoToScene(t); },
-                        undefined,
-                        () => {
-                             loader.load(pathPng, 
-                                (t) => { t.colorSpace = THREE.SRGBColorSpace; addPhotoToScene(t); },
-                                undefined,
-                                () => {} 
-                             );
-                        }
-                    );
-                }
+            // 2. Vòng lặp tự động quét ảnh
+            for (let i = 1; i <= totalImages; i++) {
+                // Đường dẫn ảnh chuẩn: images/1.jpg, images/2.jpg...
+                const path = `images/${i}.jpg`; 
+                
+                loader.load(
+                    path, 
+                    (texture) => { 
+                        // Khi tìm thấy ảnh -> Đưa vào cây ngay lập tức
+                        texture.colorSpace = THREE.SRGBColorSpace; 
+                        addPhotoToScene(texture); 
+                    },
+                    undefined, // Bỏ qua sự kiện loading
+                    (err) => {
+                        // Nếu thiếu ảnh nào (ví dụ thiếu số 5) thì bỏ qua, không báo lỗi
+                        // console.log('Không tìm thấy:', path);
+                    }
+                );
             }
         }
 
