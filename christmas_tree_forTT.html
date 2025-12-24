@@ -167,11 +167,30 @@
     </script>
 </head>
 <body>
-
+    <audio id="bg-music" loop>
+    <source src="music/song.mp3" type="audio/mpeg">
+    </audio>
     <div id="loader">
-        <div class="spinner"></div>
-        <div class="loader-text">Loading Memories</div>
-    </div>
+    <div class="spinner"></div>
+    <div class="loader-text">Cham Cham iu dấu của anh <3 </div>
+    
+    <button id="start-btn" style="
+        margin-top: 30px;
+        padding: 12px 30px;
+        background: transparent;
+        border: 1px solid #d4af37;
+        color: #d4af37;
+        font-family: 'Cinzel', serif;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        display: none; /* Ẩn lúc đầu, đợi load xong mới hiện */
+    ">
+        ▶ Em doán xem ^^
+    </button>
+</div>
 
     <div id="canvas-container"></div>
 
@@ -190,8 +209,8 @@
                     <input type="file" id="file-input" multiple accept="image/*">
                 </label>
             </div>
-            <div class="hint-text">Use "Select Folder" to load all photos at once</div>
-            <div class="hint-text" style="opacity: 0.7; font-size: 8px;">Or put photos in "./images/" (1.jpg - 30.jpg)</div>
+            <div class="hint-text">Em hãy thử "nắm tay", "xòe tay" để thấy sự đặc biệt nhé</div>
+            <div class="hint-text" style="opacity: 0.7; font-size: 8px;">Thử "cầm" tấm hình = 2 ngón đi em </div>
         </div>
     </div>
 
@@ -271,11 +290,28 @@
             setupEvents();
             await initMediaPipe();
             
+            // --- LOGIC MỚI: Đợi bấm nút mới vào ---
             const loader = document.getElementById('loader');
-            loader.style.opacity = 0;
-            setTimeout(() => loader.remove(), 800);
+            const startBtn = document.getElementById('start-btn');
+            const music = document.getElementById('bg-music');
 
-            animate();
+            // 1. Ẩn icon xoay, hiện nút Start
+            const spinner = document.querySelector('.spinner');
+            if(spinner) spinner.style.display = 'none';
+            if(startBtn) startBtn.style.display = 'block';
+
+            // 2. Sự kiện khi bấm nút
+            startBtn.addEventListener('click', () => {
+                // Bật nhạc
+                music.play().catch(e => console.log("Không thể phát nhạc:", e));
+                
+                // Ẩn màn hình chờ
+                loader.style.opacity = 0;
+                setTimeout(() => loader.remove(), 800);
+                
+                // Bắt đầu hiệu ứng tuyết rơi/cây thông
+                animate();
+            });
         }
 
         // --- 增强版图片加载系统 ---
